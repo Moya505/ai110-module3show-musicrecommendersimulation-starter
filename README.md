@@ -139,41 +139,82 @@ Top Recommendations
      - genre mismatch (+0.0)
      - mood match (+1.0)
      - energy similarity (+0.96)
+     ---------------------------------------
+     High-Energy Pop
+1. Sunrise City — 3.92 (genre match, mood match, energy +0.92)
+2. Open Skies — 3.89 (genre match, mood match, energy +0.89)
+3. Weekend Motion — 3.00 (genre match, mood mismatch, energy +1.00)
+4. Gym Hero — 2.97 (genre match, mood mismatch, energy +0.97)
+5. Rooftop Lights — 1.86 (genre mismatch, mood match, energy +0.86)
+
+Chill Lofi
+1. Library Rain — 4.00 (genre match, mood match, energy +1.00)
+2. Soft Focus — 3.97 (genre match, mood match, energy +0.97)
+3. Midnight Coding — 3.93 (genre match, mood match, energy +0.93)
+4. Quiet Pages — 2.97 (genre match, mood mismatch, energy +0.97)
+5. Focus Flow — 2.95 (genre match, mood mismatch, energy +0.95)
+
+Deep Intense Rock
+1. Storm Runner — 3.96 (genre match, mood match, energy +0.96)
+2. After the Rain — 2.73 (genre match, mood mismatch, energy +0.73)
+3. Gym Hero — 1.98 (genre mismatch, mood match, energy +0.98)
+4. Weekend Motion — 1.95 (genre mismatch, mood match, energy +0.95)
+5. Neon Sprint — 1.93 (genre mismatch, mood match, energy +0.93)
+
+Conflicting Style and Mood
+1. Storm Runner — 2.99 (genre match, mood mismatch, energy +0.99)
+2. After the Rain — 2.78 (genre match, mood mismatch, energy +0.78)
+3. Midnight Coding — 1.52 (genre mismatch, mood match, energy +0.52)
+4. Soft Focus — 1.48 (genre mismatch, mood match, energy +0.48)
+5. Library Rain — 1.45 (genre mismatch, mood match, energy +0.45)
+
+Unlisted Preferences
+1. Blue Lantern — 0.94 (both mismatched, energy +0.94)
+2. Midnight Coding — 0.92 (both mismatched, energy +0.92)
+3. Amber Room — 0.91 (both mismatched, energy +0.91)
+4. Focus Flow — 0.90 (both mismatched, energy +0.90)
+5. Soft Focus — 0.88 (both mismatched, energy +0.88)
+
+Minimum Energy
+1. Library Rain — 3.65 (genre match, mood match, energy +0.65)
+2. Soft Focus — 3.62 (genre match, mood match, energy +0.62)
+3. Midnight Coding — 3.58 (genre match, mood match, energy +0.58)
+4. Quiet Pages — 2.68 (genre match, mood mismatch, energy +0.68)
+5. Focus Flow — 2.60 (genre match, mood mismatch, energy +0.60)
+
+Maximum Energy
+1. Storm Runner — 3.91 (genre match, mood match, energy +0.91)
+2. After the Rain — 2.68 (genre match, mood mismatch, energy +0.68)
+3. Gym Hero — 1.93 (genre mismatch, mood match, energy +0.93)
+4. Weekend Motion — 1.90 (genre mismatch, mood match, energy +0.90)
+5. Neon Sprint — 1.88 (genre mismatch, mood match, energy +0.88)
 ------------------------------------------------------------
 
 ---
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+I compared seven profiles: High-Energy Pop, Chill Lofi, Deep Intense Rock, Conflicting Style and Mood, Unlisted Preferences, Minimum Energy, and Maximum Energy. The top songs changed when genre, mood, or target energy changed. For example, High-Energy Pop ranked *Sunrise City* first, while Chill Lofi ranked *Library Rain* first.
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+I also temporarily removed the mood points and tested the conflicting rock-and-chill profile. The rock songs stayed on top because they earned genre points, with energy similarity deciding their order. The total score range changed from 0–4 to 0–3, which confirmed that removing a one-point feature lowers the maximum by one. I restored the mood rule after the comparison.
 
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
-
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+- The catalog has only 20 songs, so many genres and moods are missing.
+- Genre is worth 2 points, so it can outweigh a mood match.
+- Genre and mood matches must be exact; related labels get no credit.
+- Energy similarity treats equal gaps above and below the target the same.
+- Tempo, valence, danceability, and acousticness do not affect recommendations.
+- The system does not use lyrics, listening history, or feedback from other users.
+- Users whose preferences are absent from the catalog may receive weak matches.
+- Tied scores keep the catalog's original order, which can favor earlier entries.
 
 ---
 
 ## Reflection
 
-Read and complete `model_card.md`:
+I learned that a recommender turns user preferences and song features into scores, then uses those scores to rank choices. Even a small change to the scoring weights can change which songs appear first. The explanations help show why each song was recommended.
 
-[**Model Card**](model_card.md)
-
-Write 1 to 2 paragraphs here about what you learned:
-
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+The experiments showed that scoring rules can favor some preferences over others. In my system, genre has more weight than mood, and users with unlisted genres or moods receive no points for those features. A larger catalog, more flexible preferences, and more varied signals could make recommendations fairer and more useful.
