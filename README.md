@@ -23,8 +23,26 @@ The simulation uses these features:
 
 - **`Song`**: `id`, `title`, `artist`, `genre`, `mood`, `energy`, `tempo_bpm`, `valence`, `danceability`, and `acousticness`. The ID, title, and artist identify or describe a track; the remaining fields describe its style and sound.
 - **`UserProfile`**: `favorite_genre`, `favorite_mood`, `target_energy`, and `likes_acoustic`.
+- **`PlaylistCriteria`**: request-specific genre and mood lists, optional minimum/maximum energy, acoustic preference, song count, and/or target duration. It trims and deduplicates labels and rejects invalid values before a workflow can start.
 
 The scoring recipe below defines how the simulation will compare songs with the user's preferences and rank the strongest matches.
+
+Example request criteria:
+
+```python
+from src.recommender import PlaylistCriteria
+
+criteria = PlaylistCriteria(
+    genres=("pop", "indie pop"),
+    moods=("happy",),
+    min_energy=0.6,
+    max_energy=1.0,
+    likes_acoustic=False,
+    song_count=10,
+)
+```
+
+Energy must be between 0 and 1, song count must be a positive integer, and target duration must be positive. At least one criterion is required. This step validates and normalizes request data; the current ranking function does not yet apply these playlist constraints. Duration cannot be enforced until song durations are added to the catalog.
 
 The intended system compares each song’s genre, mood, and energy with the user’s preferences. It awards 2 points for a genre match, 1 for a mood match, and up to 1 point for energy similarity. It then sorts songs by total score and returns the top K. Although the Song data includes other features—such as tempo and acousticness—the documented scoring recipe does not use them.
 
@@ -98,6 +116,20 @@ pytest
 ```
 
 You can add more tests in `tests/test_recommender.py`.
+
+### Agentic Workflow Diagrams
+
+Generate the Mermaid source diagrams with:
+
+```bash
+python -m src.generate_agentic_workflow
+```
+
+The command writes `docs/agentic_music_workflow.mmd` (agent workflow) and
+`docs/agentic_music_entities.mmd` (entity relationships among users,
+preferences, workflow runs, agents, tools, songs, recommendations, and
+feedback). These diagrams describe a proposed agentic extension; the current
+simulation still runs its recommender deterministically.
 
 ---
 

@@ -1,0 +1,77 @@
+erDiagram
+    USER {
+        int user_id PK
+    }
+    USER_PREFERENCES {
+        int preference_id PK
+        int user_id FK
+        string favorite_genre
+        string favorite_mood
+        float target_energy
+        boolean likes_acoustic
+    }
+    RECOMMENDATION_REQUEST {
+        int request_id PK
+        int user_id FK
+        int preference_id FK
+        int top_k
+    }
+    WORKFLOW_RUN {
+        int run_id PK
+        int request_id FK
+        string status
+    }
+    AGENT {
+        int agent_id PK
+        string name
+        string responsibility
+    }
+    TOOL {
+        int tool_id PK
+        string name
+        string purpose
+    }
+    AGENT_STEP {
+        int step_id PK
+        int run_id FK
+        int agent_id FK
+        int tool_id FK "optional"
+        int step_order
+        string status
+    }
+    SONG {
+        int song_id PK
+        string title
+        string artist
+        string genre
+        string mood
+        float energy
+        float tempo_bpm
+        float valence
+        float danceability
+        float acousticness
+    }
+    RECOMMENDATION {
+        int recommendation_id PK
+        int run_id FK
+        int song_id FK
+        int rank
+        float score
+        string explanation
+    }
+    USER_FEEDBACK {
+        int feedback_id PK
+        int run_id FK
+        string feedback_text
+    }
+
+    USER ||--|| USER_PREFERENCES : configures
+    USER ||--o{ RECOMMENDATION_REQUEST : submits
+    USER_PREFERENCES ||--o{ RECOMMENDATION_REQUEST : supplies
+    RECOMMENDATION_REQUEST ||--|| WORKFLOW_RUN : starts
+    WORKFLOW_RUN ||--|{ AGENT_STEP : records
+    AGENT ||--o{ AGENT_STEP : executes
+    TOOL o|--o{ AGENT_STEP : invoked_by
+    WORKFLOW_RUN ||--o{ RECOMMENDATION : produces
+    SONG ||--o{ RECOMMENDATION : appears_in
+    WORKFLOW_RUN ||--o| USER_FEEDBACK : may_receive

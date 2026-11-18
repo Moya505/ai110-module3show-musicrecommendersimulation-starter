@@ -1,4 +1,6 @@
-from src.recommender import Song, UserProfile, Recommender
+import pytest
+
+from src.recommender import PlaylistCriteria, Song, UserProfile, Recommender
 
 def make_small_recommender() -> Recommender:
     songs = [
@@ -59,3 +61,43 @@ def test_explain_recommendation_returns_non_empty_string():
     explanation = rec.explain_recommendation(user, song)
     assert isinstance(explanation, str)
     assert explanation.strip() != ""
+
+
+def test_playlist_criteria_normalizes_genres_and_accepts_constraints():
+    criteria = PlaylistCriteria(
+        genres=[" pop ", "Pop", "indie pop"],
+        moods=(" happy ",),
+        min_energy=0.4,
+        max_energy=0.9,
+        likes_acoustic=False,
+        song_count=10,
+        duration_minutes=30,
+    )
+
+    assert criteria.genres == ("pop", "indie pop")
+    assert criteria.moods == ("happy",)
+    assert criteria.min_energy == 0.4
+    assert criteria.max_energy == 0.9
+    assert criteria.likes_acoustic is False
+    assert criteria.song_count == 10
+    assert criteria.duration_minutes == 30.0
+
+
+@pytest.mark.parametrize(
+    "criteria",
+    [
+        {},
+        {"genres": (" ",)},
+        {"min_energy": -0.1},
+        {"max_energy": 1.1},
+        {"min_energy": 0.8, "max_energy": 0.2},
+        {"likes_acoustic": "yes"},
+        {"song_count": 0},
+        {"song_count": 1.5},
+        {"duration_minutes": 0},
+        {"duration_minutes": float("inf")},
+    ],
+)
+def test_playlist_criteria_rejects_invalid_values(criteria):
+    with pytest.raises((TypeError, ValueError)):
+        PlaylistCriteria(**criteria)

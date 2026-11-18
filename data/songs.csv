@@ -1,21 +1,101 @@
-id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
-1,Sunrise City,Neon Echo,pop,happy,0.82,118,0.84,0.79,0.18
-2,Midnight Coding,LoRoom,lofi,chill,0.42,78,0.56,0.62,0.71
-3,Storm Runner,Voltline,rock,intense,0.91,152,0.48,0.66,0.10
-4,Library Rain,Paper Lanterns,lofi,chill,0.35,72,0.60,0.58,0.86
-5,Gym Hero,Max Pulse,pop,intense,0.93,132,0.77,0.88,0.05
-6,Spacewalk Thoughts,Orbit Bloom,ambient,chill,0.28,60,0.65,0.41,0.92
-7,Coffee Shop Stories,Slow Stereo,jazz,relaxed,0.37,90,0.71,0.54,0.89
-8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22
-9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78
-10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35
-11,Golden Hour Drive,Velvet Avenue,indie pop,happy,0.72,116,0.83,0.77,0.38
-12,Quiet Pages,North Window,lofi,focused,0.32,74,0.54,0.48,0.88
-13,Neon Sprint,Static Hearts,synthwave,intense,0.88,146,0.61,0.81,0.12
-14,Blue Lantern,Juniper Miles,jazz,relaxed,0.44,88,0.68,0.52,0.82
-15,Open Skies,Daybreak Club,pop,happy,0.79,126,0.86,0.84,0.24
-16,Low Tide,Cloud Harbor,ambient,chill,0.24,58,0.62,0.36,0.95
-17,After the Rain,Paper Satellites,rock,moody,0.68,104,0.47,0.59,0.28
-18,Weekend Motion,City Arcade,pop,intense,0.90,138,0.78,0.91,0.08
-19,Soft Focus,Maple Static,lofi,chill,0.38,82,0.57,0.56,0.81
-20,Amber Room,Sunday Theory,jazz,relaxed,0.41,96,0.74,0.58,0.76
+id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness,description
+1,Sunrise City,Neon Echo,pop,happy,0.82,118,0.84,0.79,0.18,"Bright synth-pop with a bouncy beat, made for a sunny morning commute."
+2,Midnight Coding,LoRoom,lofi,chill,0.42,78,0.56,0.62,0.71,"Mellow lofi beats with soft keys, good for late-night work sessions."
+3,Storm Runner,Voltline,rock,intense,0.91,152,0.48,0.66,0.10,"Fast, distorted guitar rock with pounding drums and a driving pace."
+4,Library Rain,Paper Lanterns,lofi,chill,0.35,72,0.60,0.58,0.86,"Quiet acoustic lofi with rain textures, ideal for studying."
+5,Gym Hero,Max Pulse,pop,intense,0.93,132,0.77,0.88,0.05,High-powered dance pop with a heavy beat for workouts.
+6,Spacewalk Thoughts,Orbit Bloom,ambient,chill,0.28,60,0.65,0.41,0.92,"Slow, floating ambient pads that feel spacious and calm."
+7,Coffee Shop Stories,Slow Stereo,jazz,relaxed,0.37,90,0.71,0.54,0.89,"Warm acoustic jazz with brushed drums, like a quiet cafe afternoon."
+8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22,"Pulsing retro synths with a dark, cinematic feel for night driving."
+9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78,"Steady, unobtrusive lofi rhythm that helps sustain concentration."
+10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35,Upbeat indie pop with shimmering guitars and a feel-good chorus.
+11,Golden Hour Drive,Velvet Avenue,indie pop,happy,0.72,116,0.83,0.77,0.38,"Sunny indie pop with warm guitars, suited to a relaxed road trip."
+12,Quiet Pages,North Window,lofi,focused,0.32,74,0.54,0.48,0.88,"Soft, slow lofi with gentle piano for deep reading."
+13,Neon Sprint,Static Hearts,synthwave,intense,0.88,146,0.61,0.81,0.12,"Fast, aggressive synthwave with heavy bass and a racing tempo."
+14,Blue Lantern,Juniper Miles,jazz,relaxed,0.44,88,0.68,0.52,0.82,Smooth late-evening jazz with a soft saxophone and slow groove.
+15,Open Skies,Daybreak Club,pop,happy,0.79,126,0.86,0.84,0.24,"Cheerful, danceable pop with an uplifting, sing-along hook."
+16,Low Tide,Cloud Harbor,ambient,chill,0.24,58,0.62,0.36,0.95,"Very slow, airy ambient with ocean-like drones, deeply calming."
+17,After the Rain,Paper Satellites,rock,moody,0.68,104,0.47,0.59,0.28,Brooding mid-tempo rock with reverb-heavy guitars and a wistful tone.
+18,Weekend Motion,City Arcade,pop,intense,0.90,138,0.78,0.91,0.08,"Loud, high-tempo club pop built for dancing."
+19,Soft Focus,Maple Static,lofi,chill,0.38,82,0.57,0.56,0.81,"Hazy, gentle lofi with warm tape crackle and a relaxed pace."
+20,Amber Room,Sunday Theory,jazz,relaxed,0.41,96,0.74,0.58,0.76,"Easygoing jazz trio with soft piano, great for unwinding."
+21,Paper Kites,Linden Row,folk,nostalgic,0.34,84,0.58,0.45,0.93,"Fingerpicked acoustic folk with a tender, nostalgic mood."
+22,Dust Road Home,Cedar Hollow,country,nostalgic,0.52,98,0.62,0.55,0.74,"Gentle country ballad about going home, with slide guitar."
+23,Backporch Sunday,Wren and Clay,country,happy,0.66,112,0.80,0.68,0.58,Cheerful acoustic country with handclaps and an easy sing-along feel.
+24,Honky Tonk Heart,Rusty Mile,country,energetic,0.78,128,0.77,0.74,0.42,Upbeat country with fiddle and a lively two-step rhythm.
+25,Slow Dance Kitchen,Marigold Ray,rnb,romantic,0.40,78,0.66,0.70,0.45,"Smooth, slow R&B with soft vocals for a romantic evening."
+26,Velvet Hours,Noor Vale,rnb,romantic,0.46,86,0.64,0.75,0.38,Silky R&B groove with warm bass and intimate vocals.
+27,Midnight Text,Cass Orion,rnb,moody,0.55,92,0.40,0.78,0.25,Late-night R&B with dark synths and a restless mood.
+28,City Pulse,Block Theory,hip hop,energetic,0.80,96,0.65,0.86,0.10,"Hard-hitting hip hop beat with confident, rhythmic flow."
+29,Concrete Poetry,Verse Nine,hip hop,focused,0.58,88,0.50,0.72,0.18,"Steady boom-bap hip hop with sparse, thoughtful lyrics."
+30,Corner Store Sunrise,Lil Marlow,hip hop,happy,0.70,100,0.82,0.84,0.15,"Bright, feel-good hip hop with a jazzy sample and bouncy drums."
+31,Night Shift Flow,Dro Kent,hip hop,moody,0.62,82,0.38,0.76,0.14,"Dark, slow hip hop with deep bass for late nights."
+32,Piano at Dawn,Elise Moreau,classical,relaxed,0.18,66,0.55,0.28,0.99,"Solo piano with soft dynamics, peaceful and unhurried."
+33,String Quartet No. 3,Halvorsen Quartet,classical,focused,0.30,90,0.52,0.34,0.98,"Precise, balanced chamber strings that suit quiet concentration."
+34,Nocturne in Blue,Elise Moreau,classical,melancholy,0.20,60,0.25,0.25,0.99,"Slow, tender piano piece with a quietly sorrowful tone."
+35,Grand Finale,Vienna Sinfonia,classical,intense,0.85,140,0.45,0.30,0.95,Full orchestra crescendo with dramatic percussion and brass.
+36,Voltage Bloom,Pulse Garden,edm,energetic,0.95,128,0.80,0.92,0.03,Festival EDM with a big drop and relentless four-on-the-floor kick.
+37,Afterglow Rave,Kinetic Lane,edm,intense,0.97,150,0.60,0.88,0.02,"Hard, fast electronic track with heavy synth leads."
+38,Sunset Deck,Palma Waves,edm,chill,0.52,112,0.78,0.80,0.12,"Laid-back deep house with warm pads, good for a rooftop sunset."
+39,Hands Up Anthem,Skyline Kids,edm,happy,0.90,130,0.90,0.90,0.05,Euphoric dance track with soaring synths and a joyful hook.
+40,Salt and Smoke,Bayou Blue,blues,melancholy,0.45,72,0.30,0.50,0.65,Slow electric blues with a weeping guitar and a heavy heart.
+41,Crossroads Lullaby,Old Hat Trio,blues,relaxed,0.38,80,0.55,0.52,0.72,"Easy, swaying acoustic blues with a warm, unhurried groove."
+42,Twelve Bar Thunder,Delta Sparks,blues,energetic,0.75,120,0.68,0.65,0.30,"Driving electric blues shuffle with raw, punchy guitar."
+43,Island Breeze,Kingston Dawn,reggae,happy,0.62,90,0.88,0.82,0.40,Sunny reggae with an easy offbeat groove and warm vocals.
+44,Slow Roots,Jah Meridian,reggae,chill,0.48,78,0.72,0.75,0.45,"Deep, laid-back dub reggae with heavy bass and a relaxed pulse."
+45,Fiesta Nocturna,Luz Cordero,latin,energetic,0.86,104,0.84,0.93,0.20,Fiery Latin dance track with percussion and bright brass.
+46,Bossa Afternoon,Rio Lento,latin,relaxed,0.36,86,0.76,0.63,0.80,"Soft bossa nova guitar, relaxed and breezy."
+47,Corazon de Neon,Marisol Vega,latin,romantic,0.60,98,0.72,0.80,0.30,Sultry Latin pop with warm guitar and heartfelt vocals.
+48,Glass Cathedral,Pale Season,rock,moody,0.64,100,0.35,0.50,0.30,Atmospheric rock with echoing guitars and a gloomy edge.
+49,Garage Summer,The Loud Maps,rock,happy,0.80,140,0.82,0.62,0.20,Sunny garage rock with fuzzy chords and a shout-along chorus.
+50,Highway Hymn,Granite Road,rock,energetic,0.84,132,0.60,0.58,0.18,Anthemic classic rock with big riffs and a steady stomp.
+51,Broken Amp Blues,Cinder Valley,rock,melancholy,0.60,96,0.28,0.48,0.35,Slow-burning rock ballad with a bittersweet guitar solo.
+52,Wall of Noise,Static Reign,rock,intense,0.96,160,0.40,0.55,0.05,"Extremely loud, fast rock with a wall of distorted guitars."
+53,Lantern Parade,Indigo Parade,indie pop,happy,0.70,120,0.85,0.78,0.40,Playful indie pop with xylophone and a cheerful march beat.
+54,Soft Static,Moth Letters,indie pop,melancholy,0.42,96,0.35,0.55,0.60,Dreamy indie pop with hushed vocals and a bittersweet feel.
+55,Pocket Sun,Fern Atlas,indie pop,chill,0.50,102,0.70,0.65,0.55,"Light, breezy indie pop with a laid-back groove."
+56,Polaroid Summer,Velvet Avenue,indie pop,nostalgic,0.58,110,0.68,0.66,0.45,Warm indie pop that sounds like a faded summer photo.
+57,Crown of Glass,Aurelia Sky,pop,romantic,0.55,100,0.70,0.68,0.30,Glossy pop ballad with swelling strings and heartfelt vocals.
+58,Last Call Lights,Mira Shore,pop,moody,0.65,108,0.40,0.74,0.20,Dark electro-pop with a throbbing bass and detached vocals.
+59,Confetti Day,Daybreak Club,pop,happy,0.85,122,0.92,0.88,0.15,Extra-bright pop with handclaps and a cheerful hook.
+60,Pink Horizon,Neon Echo,pop,chill,0.48,104,0.66,0.70,0.28,"Soft dream pop with silky vocals and a slow, floating groove."
+61,Heartbeat Remix,Max Pulse,pop,energetic,0.88,128,0.80,0.90,0.08,Punchy dance pop with a pounding kick and big chorus.
+62,Rain on Tin,Cloud Harbor,ambient,relaxed,0.22,62,0.60,0.30,0.94,Gentle ambient soundscape built around soft rain and warm drones.
+63,Deep Field,Orbit Bloom,ambient,focused,0.26,64,0.50,0.32,0.90,"Spare, evolving ambient texture that stays out of the way while you work."
+64,Glacier Memory,Aurora Fen,ambient,melancholy,0.20,56,0.30,0.28,0.93,"Cold, slow ambient with distant piano and a lonely feel."
+65,Tidal Lullaby,Low Moon,ambient,romantic,0.24,60,0.58,0.35,0.88,"Soft, warm ambient with gentle swells, tender and intimate."
+66,Study Hall,Paper Lanterns,lofi,focused,0.36,76,0.55,0.55,0.80,"Calm lofi drums and muted keys, built for long study sessions."
+67,Cassette Window,Maple Static,lofi,nostalgic,0.40,80,0.62,0.58,0.77,"Warm lofi with tape hiss and a wistful, nostalgic tone."
+68,Rainy Bus Stop,LoRoom,lofi,melancholy,0.34,70,0.38,0.52,0.82,Slow lofi with sad piano chords and rain ambience.
+69,Sunday Chores,Slow Stereo,lofi,happy,0.52,92,0.78,0.70,0.60,"Cheerful, light lofi with a playful groove for easy tasks."
+70,Smoky Backroom,Sunday Theory,jazz,moody,0.50,94,0.40,0.55,0.70,"Dim, smoky jazz with a muted trumpet and a slow, brooding swing."
+71,Bebop Sprint,Quick Quartet,jazz,energetic,0.82,180,0.72,0.60,0.65,"Fast, virtuosic bebop with lively horns and a driving walking bass."
+72,Velvet Rope,Juniper Miles,jazz,romantic,0.35,74,0.62,0.50,0.78,"Slow, romantic jazz ballad with soft piano and brushed snare."
+73,Morning Sidewalk,Slow Stereo,jazz,happy,0.58,108,0.84,0.66,0.70,Sunny swing jazz with bright piano and a bouncy rhythm.
+74,Laser Grid,Static Hearts,synthwave,energetic,0.84,132,0.66,0.80,0.10,"Bright, driving synthwave with arpeggios and a fast pulse."
+75,Chrome Sunset,Neon Echo,synthwave,chill,0.55,100,0.62,0.70,0.20,Relaxed retro synthwave with warm pads and a slow beat.
+76,Digital Rain,Voltline,synthwave,focused,0.60,104,0.48,0.68,0.18,"Steady, hypnotic synthwave that works well as coding music."
+77,Memory Palace,Pale Season,synthwave,nostalgic,0.62,108,0.55,0.66,0.22,"Nostalgic 80s-style synths with warm, wistful melodies."
+78,Campfire Count,Linden Row,folk,happy,0.55,110,0.78,0.62,0.88,Warm acoustic folk with banjo and a friendly sing-along feel.
+79,River Road Letters,Cedar Hollow,folk,melancholy,0.30,76,0.32,0.42,0.95,Sparse folk with a quiet voice and a bittersweet story.
+80,Harvest Moon Dance,Wren and Clay,folk,energetic,0.72,124,0.80,0.72,0.80,Foot-stomping folk with fiddle and a lively dance tempo.
+81,Quiet Fields,Linden Row,folk,relaxed,0.28,80,0.60,0.40,0.96,"Gentle acoustic folk for slow, peaceful mornings."
+82,Marble Halls,Vienna Sinfonia,classical,romantic,0.32,72,0.60,0.30,0.97,"Sweeping, tender strings and piano in a romantic style."
+83,Candlelight Etude,Elise Moreau,classical,chill,0.22,68,0.55,0.28,0.99,"Slow, soft piano etude that settles the mind."
+84,Toccata Run,Halvorsen Quartet,classical,energetic,0.78,150,0.65,0.35,0.96,"Rapid, spirited strings with lively, dancing phrases."
+85,Subwoofer Sermon,Block Theory,hip hop,intense,0.90,140,0.45,0.78,0.08,Aggressive hip hop with a booming 808 bass and fast delivery.
+86,Velvet Crate,Lil Marlow,hip hop,chill,0.50,84,0.60,0.74,0.20,"Relaxed hip hop with a soulful sample and a slow, smooth groove."
+87,Golden Ticket,Marigold Ray,rnb,happy,0.68,102,0.82,0.82,0.30,"Upbeat, feel-good R&B with a funky bassline and bright vocals."
+88,Rainy Window Slow,Noor Vale,rnb,melancholy,0.36,72,0.28,0.60,0.40,"Quiet R&B with sad lyrics and a slow, aching groove."
+89,Heatwave Riddim,Kingston Dawn,reggae,energetic,0.74,98,0.86,0.84,0.35,Upbeat reggae with a bright horn section and a danceable groove.
+90,Dusk Conga,Luz Cordero,latin,happy,0.76,110,0.88,0.90,0.28,Joyful Latin pop with congas and a sunny melody.
+91,Slow Burn Bolero,Marisol Vega,latin,melancholy,0.40,80,0.32,0.55,0.60,Dramatic bolero with passionate vocals and a bittersweet mood.
+92,Basement Shuffle,Delta Sparks,blues,focused,0.50,90,0.50,0.58,0.55,Steady blues groove with restrained guitar and a mellow pulse.
+93,Deep Pocket Dub,Jah Meridian,reggae,moody,0.52,76,0.42,0.72,0.40,Dark dub reggae with echoing bass and a heavy mood.
+94,Marching Bells,Skyline Kids,edm,focused,0.70,124,0.55,0.78,0.08,"Driving, minimal techno with a steady pulse that supports focus."
+95,Pine Creek Waltz,Cedar Hollow,country,relaxed,0.35,82,0.64,0.50,0.85,Slow country waltz with acoustic guitar and soft harmonies.
+96,Empty Stadium Lights,Rusty Mile,country,melancholy,0.48,90,0.30,0.48,0.66,"Mournful country song about a lonely town, with pedal steel."
+97,Dirt Road Anthem Jr.,Wren and Clay,country,intense,0.88,140,0.58,0.62,0.30,"Loud, driving country rock with stomping drums and heavy guitars."
+98,Lowlight Lounge,Old Hat Trio,blues,romantic,0.40,70,0.60,0.55,0.62,"Slow, smoky blues with soulful guitar and an intimate mood."
+99,Neon Delta,Bayou Blue,blues,moody,0.58,94,0.35,0.58,0.40,"Gritty electric blues with a dark, brooding atmosphere."
+100,Tin Roof Jubilee,Old Hat Trio,blues,happy,0.65,110,0.82,0.70,0.60,"Upbeat, bouncy blues with piano and a joyful swing."

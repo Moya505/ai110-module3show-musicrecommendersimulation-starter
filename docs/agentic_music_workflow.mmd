@@ -1,0 +1,42 @@
+flowchart TD
+    user[User: preferences, top K, and optional feedback]
+    planner[Orchestrator agent: plan and track workflow]
+    validator[Preference agent: validate and normalize inputs]
+    clarification{Are preferences complete and valid?}
+    ask[Ask user to clarify or correct preferences]
+    catalog[Catalog tool: load songs.csv]
+    catalog_check{Is the catalog available?}
+    recommender[Recommendation tool: score and rank songs]
+    critic[Critic agent: verify ranking, scores, and explanations]
+    quality_check{Do results pass checks?}
+    retry_budget{Has the retry already been used?}
+    retry[Retry once with corrected tool inputs]
+    explainer[Explanation agent: summarize grounded match reasons]
+    results[Return recommendations and limitations]
+    feedback[Collect optional user feedback for the next request]
+    error[Report the issue; do not return unverified recommendations]
+
+    user --> planner
+    planner --> validator
+    validator --> clarification
+    clarification -- No --> ask
+    ask --> user
+    clarification -- Yes --> catalog
+    catalog --> catalog_check
+    catalog_check -- No --> error
+    catalog_check -- Yes --> recommender
+    recommender --> critic
+    critic --> quality_check
+    quality_check -- No --> retry_budget
+    retry_budget -- No --> retry
+    retry --> recommender
+    quality_check -- Yes --> explainer
+    retry_budget -- Yes --> error
+    explainer --> results
+    results --> feedback
+    feedback -. Next request; user remains in control .-> planner
+
+    subgraph tools[Existing deterministic system tools]
+        catalog
+        recommender
+    end
