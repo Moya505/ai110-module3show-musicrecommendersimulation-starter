@@ -98,7 +98,7 @@ I used four kinds of checks, all reproducible with `python src/evaluate.py` (ful
 
 ### What I learned about recommenders and AI
 
-Small design choices, such as a genre weight of 2, shape who gets good recommendations. A recommender can feel "smart" while mostly reflecting what its designer chose to score. The most useful part of the project was separating **what code decides** (scores and rankings) from **what AI is allowed to say** (wording that is checked against facts). It made the system easier to test and made failures visible.
+Small design choices, such as a genre weight of 2, shape who gets good recommendations. A recommender can feel "smart" while mostly reflecting what its designer chose to score. The most useful part of the project was separating what code decides (scores and rankings) from what AI is allowed to say** (wording that is checked against facts). It made the system easier to test and made failures visible.
 
 ### How I collaborated with AI
 
