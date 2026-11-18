@@ -1,252 +1,151 @@
-# 🎵 Music Recommender Simulation
 
-## Project Summary
+# Music Recommender: From Scoring Rule to Grounded, Agentic RAG Pipeline
 
-In this project you will build and explain a small music recommender system.
+## Original Project (Modules 1-3)
 
-Your goal is to:
+This project extends my **Music Recommender Simulation** from Modules 1-3. The original goal was to represent songs and a user "taste profile" as data, then design a scoring rule that turns them into ranked recommendations. It was a content-based, CLI-first recommender. Each song got up to 4 points: +2 for a genre match, +1 for a mood match, and up to +1 for energy similarity. The top K songs were returned with the reasons for each score.
 
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
+## Title and Summary
 
-Replace this paragraph with your own summary of what your version does.
+**Music Recommender with Retrieval-Augmented Generation and an Agentic Workflow**
 
----
+The system recommends songs from a 100-song catalog in two ways. A user can give structured preferences (genre, mood, target energy), a free-text request such as *"calm quiet music for studying"*, or both. Free-text requests are handled by a retrieval step that narrows the catalog before the original scorer ranks the results. A set of small agents validates the input, retrieves candidates, ranks them, checks the output, and explains each pick.
 
-## How The System Works
+Why it matters: recommenders are often black boxes. Here the **score is always computed by deterministic code**, and any generated explanation is **checked against the facts** (score, rank, song attributes) before it is shown. If a language model is used and its wording invents a number or a claim, the system rejects it and falls back to a template. This keeps the explanations trustworthy.
 
-Real-world recommendation platforms combine content-based signals (similarities between songs or videos) with collaborative signals (what people with similar behavior enjoy). They also learn from interactions such as plays, skips, likes, and watch time, and may account for context. This simulation focuses on a simpler content-based approach: it compares a user's stated preferences with each song's genre, mood, energy, and acoustic character, then ranks songs by how well they match. It does not model other users or learn from listening history.
+## Architecture Overview
 
-The simulation uses these features:
-
-- **`Song`**: `id`, `title`, `artist`, `genre`, `mood`, `energy`, `tempo_bpm`, `valence`, `danceability`, and `acousticness`. The ID, title, and artist identify or describe a track; the remaining fields describe its style and sound.
-- **`UserProfile`**: `favorite_genre`, `favorite_mood`, `target_energy`, and `likes_acoustic`.
-- **`PlaylistCriteria`**: request-specific genre and mood lists, optional minimum/maximum energy, acoustic preference, song count, and/or target duration. It trims and deduplicates labels and rejects invalid values before a workflow can start.
-
-The scoring recipe below defines how the simulation will compare songs with the user's preferences and rank the strongest matches.
-
-Example request criteria:
-
-```python
-from src.recommender import PlaylistCriteria
-
-criteria = PlaylistCriteria(
-    genres=("pop", "indie pop"),
-    moods=("happy",),
-    min_energy=0.6,
-    max_energy=1.0,
-    likes_acoustic=False,
-    song_count=10,
-)
+```
+                  user request (genre / mood / energy  and/or  free-text query)
+                                      |
+                                      v
+                          Orchestrator (runs and logs every step)
+                                      |
+   PreferenceAgent -> validates input, asks a clarifying question if it is unusable
+                                      |
+   Retriever (the "R" in RAG) -> TF-IDF vectors over song descriptions,
+                                 cosine search -> candidate pool
+                                      |
+   Recommender -> score_song() ranks candidates (genre 2 + mood 1 + energy 1)
+                                      |
+   CriticAgent -> verifies sorting, score range, result count
+                                      |
+   ExplanationAgent -> TemplateExplainer (offline) or LLMExplainer (optional)
+                                      |      each sentence is grounding-checked,
+                                      |      and falls back to the template if it fails
+                                      v
+                   ranked recommendations + explanations + limitation notes
 ```
 
-Energy must be between 0 and 1, song count must be a positive integer, and target duration must be positive. At least one criterion is required. This step validates and normalizes request data; the current ranking function does not yet apply these playlist constraints. Duration cannot be enforced until song durations are added to the catalog.
+| Component | File | Role |
+|---|---|---|
+| Scoring and data | [src/recommender.py](src/recommender.py) | Loads `songs.csv`, defines `score_song` and `recommend_songs` |
+| Retrieval | [src/retriever.py](src/retriever.py) | Turns each song into a text document, embeds it (offline TF-IDF, swappable), and does a cosine-similarity search |
+| Explanation | [src/explainer.py](src/explainer.py) | Builds a fact sheet, wording from a template or LLM, `check_grounding` verifier |
+| Agents | [src/agent_workflow.py](src/agent_workflow.py) | `PreferenceAgent`, `CriticAgent`, `ExplanationAgent`, and the `Orchestrator` that logs a step trail |
+| Evaluation | [src/evaluate.py](src/evaluate.py) | Evaluation harness that writes [docs/evaluation_results.md](docs/evaluation_results.md) |
+| Diagrams | [docs/](docs/) | Mermaid workflow and entity diagrams |
 
-The intended system compares each song’s genre, mood, and energy with the user’s preferences. It awards 2 points for a genre match, 1 for a mood match, and up to 1 point for energy similarity. It then sorts songs by total score and returns the top K. Although the Song data includes other features—such as tempo and acousticness—the documented scoring recipe does not use them.
+The diagrams can be regenerated with `python -m src.generate_agentic_workflow`.
 
-Potential biases and limitations:
+## Setup Instructions
 
-Genre is strongly prioritized: its 2 points equal the maximum combined mood and energy points, so a genre match can outweigh a strong mood-and-energy match.
-Exact-match categories are inflexible: a related genre or mood gets no partial credit, even if it might appeal to the user.
-The profile is narrow: one preferred genre, mood, and energy target may not capture someone’s varied or changing taste.
-Unscored features are ignored: acousticness, tempo, danceability, and valence cannot affect recommendations under this recipe.
-The catalog limits discovery: songs missing from the CSV cannot be recommended, and ties retain catalog order rather than using another preference signal.
-### Data Flow
-
-```text
-Input: User preferences (genre, mood, target energy) + songs.csv
-                         |
-                         v
-Process: For each song, compare its genre and mood to the preferences,
-         calculate energy similarity, and add the points
-                         |
-                         v
-Collect: Keep each song together with its total score
-                         |
-                         v
-Ranking: Sort by score, highest first (keep catalog order for ties)
-                         |
-                         v
-Output: Return the top K songs as recommendations
-```
-
-### Scoring Recipe
-
-For each song, start at 0 points and add:
-
-- **+2.0 points** if the song's genre matches the user's preferred genre; otherwise, add 0.
-- **+1.0 point** if the song's mood matches the user's preferred mood; otherwise, add 0.
-- **0 to 1 similarity points** for energy, calculated as `1 - abs(song energy - target energy)`. Energy values are on a 0-to-1 scale, so an exact match earns 1 point and the greatest possible difference earns 0.
-
-Add these points to get a total score from 0 to 4, then rank songs from highest to lowest and recommend the top results. Genre is weighted most heavily, mood next, and energy similarity breaks ties or boosts songs with a closer energy level. If totals tie, keep the songs in their original catalog order.
-
----
-
-## Getting Started
-
-### Setup
-
-1. Create a virtual environment (optional but recommended):
-
+1. **Clone the repo and enter it**
+   ```bash
+   cd ai110-module3show-musicrecommendersimulation-starter
+   ```
+2. **(Optional) create a virtual environment**
    ```bash
    python -m venv .venv
-   source .venv/bin/activate      # Mac or Linux
-   .venv\Scripts\activate         # Windows
+   source .venv/bin/activate        # Mac/Linux
+   .venv\Scripts\activate           # Windows
+   ```
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Run the recommender.** `main.py` uses script-style imports, so run it as a file:
+   ```bash
+   python src/main.py
+   ```
+5. **Run the tests** (71 tests):
+   ```bash
+   python -m pytest tests
+   ```
+6. **Run the evaluation harness**
+   ```bash
+   python src/evaluate.py            # print the report
+   python src/evaluate.py --write    # save to docs/evaluation_results.md
+   ```
+7. **(Optional) have an LLM word the explanations**
+   ```bash
+   pip install anthropic
+   export ANTHROPIC_API_KEY=...
+   python src/main.py --llm
+   ```
+   No API key is needed for steps 1-6. The default path is fully offline and reproducible.
 
-2. Install dependencies
+## Sample Interactions
 
-```bash
-pip install -r requirements.txt
+**1. Structured preferences: `genre=pop, mood=happy, energy=0.9`**
+```
+1. Confetti Day by Daybreak Club
+   3.95/4.00: genre match (+2.00), mood match (+1.00), energy similarity (+0.95)
+2. Sunrise City by Neon Echo
+   3.92/4.00: genre match (+2.00), mood match (+1.00), energy similarity (+0.92)
+3. Open Skies by Daybreak Club
+   3.89/4.00: genre match (+2.00), mood match (+1.00), energy similarity (+0.89)
 ```
 
-3. Run the app:
-
-```bash
-python -m src.main
+**2. Hybrid: Chill Lofi profile plus the text query `"calm quiet music for studying"`**
 ```
-
-### Running Tests
-
-Run the starter tests with:
-
-```bash
-pytest
+Note: Your text query pre-selected 9 candidate songs; songs outside those text matches were never scored.
+1. Library Rain by Paper Lanterns
+   4.00/4.00: genre match (+2.00), mood match (+1.00), energy similarity (+1.00) | text match 0.29
+2. Study Hall by Paper Lanterns
+   2.99/4.00: genre match (+2.00), energy similarity (+0.99) | text match 0.14
 ```
+Retrieval picks the candidates, then the scorer ranks them. The system also tells the user that songs outside the retrieved pool were never scored.
 
-You can add more tests in `tests/test_recommender.py`.
-
-### Agentic Workflow Diagrams
-
-Generate the Mermaid source diagrams with:
-
-```bash
-python -m src.generate_agentic_workflow
+**3. A preference the catalog can't satisfy: `genre=metal, mood=sad, energy=0.5`**
 ```
+1. Pocket Sun by Fern Atlas       1.00/4.00: energy similarity (+1.00)
+2. Smoky Backroom by Sunday Theory 1.00/4.00: energy similarity (+1.00)
+```
+No metal songs exist, so only energy can match. The result is flagged as a catalog gap instead of pretending to be a strong match.
 
-The command writes `docs/agentic_music_workflow.mmd` (agent workflow) and
-`docs/agentic_music_entities.mmd` (entity relationships among users,
-preferences, workflow runs, agents, tools, songs, recommendations, and
-feedback). These diagrams describe a proposed agentic extension; the current
-simulation still runs its recommender deterministically.
+## Design Decisions
 
----
+- **Deterministic scoring stays the source of truth.** Agents plan, validate, and explain, but never invent a score. This makes every run reproducible and the output testable.
+- **Offline TF-IDF retrieval instead of a hosted embedding model.** It needs no API key or network and is easy to inspect. The cost is that it matches words, not meaning, so a paraphrase with no shared vocabulary can miss. The `Embedder` interface lets a real embedding model replace it without changing the rest of the pipeline.
+- **Hybrid retrieval, then rerank.** Retrieval alone is good at vibe queries, and the scorer alone is good at exact genre and mood. Combining them scored best in evaluation. The trade-off is that retrieval can exclude a song that the scorer would have liked, which is why the system states how many candidates were pre-selected.
+- **Grounding check on LLM output.** Generated text is verified against a fact sheet and falls back to a template on any failure or error. This costs some fluency but prevents fabricated claims.
+- **Genre weighted most heavily (2 of 4 points).** This is simple and easy to explain, but it can outweigh mood and energy (see Testing Summary).
 
-## Sample Recommendation Output
+## Testing Summary
 
-Top Recommendations
-============================================================
-1. Open Skies
-   Final score: 3.99 / 4.00
-   Reasons:
-     - genre match (+2.0)
-     - mood match (+1.0)
-     - energy similarity (+0.99)
-------------------------------------------------------------
-2. Sunrise City
-   Final score: 3.98 / 4.00
-   Reasons:
-     - genre match (+2.0)
-     - mood match (+1.0)
-     - energy similarity (+0.98)
-------------------------------------------------------------
-3. Weekend Motion
-   Final score: 2.90 / 4.00
-   Reasons:
-     - genre match (+2.0)
-     - mood mismatch (+0.0)
-     - energy similarity (+0.90)
-------------------------------------------------------------
-4. Gym Hero
-   Final score: 2.87 / 4.00
-   Reasons:
-     - genre match (+2.0)
-     - mood mismatch (+0.0)
-     - energy similarity (+0.87)
-------------------------------------------------------------
-5. Rooftop Lights
-   Final score: 1.96 / 4.00
-   Reasons:
-     - genre mismatch (+0.0)
-     - mood match (+1.0)
-     - energy similarity (+0.96)
-     ---------------------------------------
-     High-Energy Pop
-1. Sunrise City — 3.92 (genre match, mood match, energy +0.92)
-2. Open Skies — 3.89 (genre match, mood match, energy +0.89)
-3. Weekend Motion — 3.00 (genre match, mood mismatch, energy +1.00)
-4. Gym Hero — 2.97 (genre match, mood mismatch, energy +0.97)
-5. Rooftop Lights — 1.86 (genre mismatch, mood match, energy +0.86)
+**What worked**
+- **71 automated tests pass** across the scorer, retriever, explainer, agents, evaluation harness, and diagram generator.
+- The workflow completed healthily on **7 of 7** user profiles, including edge cases like minimum and maximum energy.
+- Across 8 free-text queries (mean precision@5):
 
-Chill Lofi
-1. Library Rain — 4.00 (genre match, mood match, energy +1.00)
-2. Soft Focus — 3.97 (genre match, mood match, energy +0.97)
-3. Midnight Coding — 3.93 (genre match, mood match, energy +0.93)
-4. Quiet Pages — 2.97 (genre match, mood mismatch, energy +0.97)
-5. Focus Flow — 2.95 (genre match, mood mismatch, energy +0.95)
+  | System | Mean precision@5 | Hit rate@5 |
+  |---|---|---|
+  | Scorer only | 0.50 | 1.00 |
+  | Retrieval only | 0.80 | 1.00 |
+  | **Hybrid** | **0.85** | 1.00 |
 
-Deep Intense Rock
-1. Storm Runner — 3.96 (genre match, mood match, energy +0.96)
-2. After the Rain — 2.73 (genre match, mood mismatch, energy +0.73)
-3. Gym Hero — 1.98 (genre mismatch, mood match, energy +0.98)
-4. Weekend Motion — 1.95 (genre mismatch, mood match, energy +0.95)
-5. Neon Sprint — 1.93 (genre mismatch, mood match, energy +0.93)
+- All **35 of 35** template explanations stayed within their facts, and the grounding check handled **7 of 7** red-team cases (invented BPM, fake quote, changed score, empty reply, and so on). A gibberish query correctly returned `no_match`.
 
-Conflicting Style and Mood
-1. Storm Runner — 2.99 (genre match, mood mismatch, energy +0.99)
-2. After the Rain — 2.78 (genre match, mood mismatch, energy +0.78)
-3. Midnight Coding — 1.52 (genre mismatch, mood match, energy +0.52)
-4. Soft Focus — 1.48 (genre mismatch, mood match, energy +0.48)
-5. Library Rain — 1.45 (genre mismatch, mood match, energy +0.45)
+**What didn't work well**
+- Queries with sparse vocabulary overlap, like *"sad rainy day"* (0.40 precision), retrieve poorly with TF-IDF.
+- The "Conflicting Style and Mood" profile (rock + chill) ranked rock songs above chill ones. Genre's 2 points outweigh mood plus energy, so users whose mood matters more than genre are underserved.
+- Only genre, mood, and energy are scored. Tempo, valence, danceability, and acousticness are ignored, and the system says so in its output.
+- Running `python -m src.main` fails because of script-style imports, and I documented `python src/main.py` as the supported entry point.
+- A duplicate nested copy of the project folder made `pytest` fail at collection, so tests are run with `python -m pytest tests`.
 
-Unlisted Preferences
-1. Blue Lantern — 0.94 (both mismatched, energy +0.94)
-2. Midnight Coding — 0.92 (both mismatched, energy +0.92)
-3. Amber Room — 0.91 (both mismatched, energy +0.91)
-4. Focus Flow — 0.90 (both mismatched, energy +0.90)
-5. Soft Focus — 0.88 (both mismatched, energy +0.88)
-
-Minimum Energy
-1. Library Rain — 3.65 (genre match, mood match, energy +0.65)
-2. Soft Focus — 3.62 (genre match, mood match, energy +0.62)
-3. Midnight Coding — 3.58 (genre match, mood match, energy +0.58)
-4. Quiet Pages — 2.68 (genre match, mood mismatch, energy +0.68)
-5. Focus Flow — 2.60 (genre match, mood mismatch, energy +0.60)
-
-Maximum Energy
-1. Storm Runner — 3.91 (genre match, mood match, energy +0.91)
-2. After the Rain — 2.68 (genre match, mood mismatch, energy +0.68)
-3. Gym Hero — 1.93 (genre mismatch, mood match, energy +0.93)
-4. Weekend Motion — 1.90 (genre mismatch, mood match, energy +0.90)
-5. Neon Sprint — 1.88 (genre mismatch, mood match, energy +0.88)
-------------------------------------------------------------
-
----
-
-## Experiments You Tried
-
-I compared seven profiles: High-Energy Pop, Chill Lofi, Deep Intense Rock, Conflicting Style and Mood, Unlisted Preferences, Minimum Energy, and Maximum Energy. The top songs changed when genre, mood, or target energy changed. For example, High-Energy Pop ranked *Sunrise City* first, while Chill Lofi ranked *Library Rain* first.
-
-I also temporarily removed the mood points and tested the conflicting rock-and-chill profile. The rock songs stayed on top because they earned genre points, with energy similarity deciding their order. The total score range changed from 0–4 to 0–3, which confirmed that removing a one-point feature lowers the maximum by one. I restored the mood rule after the comparison.
-
----
-
-## Limitations and Risks
-
-- The catalog has only 20 songs, so many genres and moods are missing.
-- Genre is worth 2 points, so it can outweigh a mood match.
-- Genre and mood matches must be exact; related labels get no credit.
-- Energy similarity treats equal gaps above and below the target the same.
-- Tempo, valence, danceability, and acousticness do not affect recommendations.
-- The system does not use lyrics, listening history, or feedback from other users.
-- Users whose preferences are absent from the catalog may receive weak matches.
-- Tied scores keep the catalog's original order, which can favor earlier entries.
-
----
+**What I learned**: evaluating the retrieval and the explanations separately showed where each part helps. Retrieval raised precision, and the grounding check addressed trust.
 
 ## Reflection
 
-I learned that a recommender turns user preferences and song features into scores, then uses those scores to rank choices. Even a small change to the scoring weights can change which songs appear first. The explanations help show why each song was recommended.
-
-The experiments showed that scoring rules can favor some preferences over others. In my system, genre has more weight than mood, and users with unlisted genres or moods receive no points for those features. A larger catalog, more flexible preferences, and more varied signals could make recommendations fairer and more useful.
+This project taught me that adding AI to a system is mostly about deciding what the AI should *not* control. Keeping the score deterministic and treating generated text as something to verify made the system easier to test, explain, and trust. Building the evaluation harness mattered as much as building the features, because the numbers showed me that retrieval helps, where it fails, and which of my assumptions were wrong. The deeper reflection on collaborating with AI, including a suggestion I accepted, one I revised, and the system's limitations, is in [model_card.md](model_card.md).
